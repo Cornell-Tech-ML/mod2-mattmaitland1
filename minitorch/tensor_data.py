@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import random
-from typing import Iterable, Optional, Sequence, Tuple, Union, List
+from typing import Iterable, Optional, Sequence, Tuple, Union
 
 import numba
 import numba.cuda
@@ -44,10 +44,8 @@ def index_to_position(index: Index, strides: Strides) -> int:
         Position in storage
 
     """
-    position = 0
-    for i, s in zip(index, strides):
-        position += i * s
-    return position
+    # TODO: Implement for Task 2.1.
+    raise NotImplementedError("Need to implement for Task 2.1")
 
 
 def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
@@ -62,11 +60,8 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
         out_index : return index corresponding to position.
 
     """
-    for i in range(len(shape) - 1, -1, -1):
-        # Calculate the index for this dimension
-        out_index[i] = ordinal % shape[i]
-        # Update ordinal for the next dimension
-        ordinal //= shape[i]
+    # TODO: Implement for Task 2.1.
+    raise NotImplementedError("Need to implement for Task 2.1")
 
 
 def broadcast_index(
@@ -86,26 +81,10 @@ def broadcast_index(
 
     Returns:
         None
+
     """
-    # Reverse the order of dimensions for easier processing
-    big_index = list(reversed(big_index))
-    big_shape = list(reversed(big_shape))
-    shape = list(reversed(shape))
-
-    # Initialize out_index with zeros
-    for i in range(len(shape)):
-        out_index[i] = 0
-
-    # Process each dimension
-    for i, dim in enumerate(shape):
-        if dim > 1:
-            # If the dimension is not 1, use the corresponding index from big_index
-            if i < len(big_shape):
-                out_index[i] = big_index[i] % dim
-        # If dim == 1, we keep the initialized 0
-
-    # Reverse the out_index to match the original dimension order
-    out_index[:] = reversed(out_index)
+    # TODO: Implement for Task 2.2.
+    raise NotImplementedError("Need to implement for Task 2.2")
 
 
 def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
@@ -120,29 +99,10 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
 
     Raises:
         IndexingError : if cannot broadcast
+
     """
-    # Convert shapes to lists for easier manipulation
-    s1 = list(shape1)
-    s2 = list(shape2)
-    
-    # Pad the shorter shape with 1s
-    max_len = max(len(s1), len(s2))
-    s1 = [1] * (max_len - len(s1)) + s1
-    s2 = [1] * (max_len - len(s2)) + s2
-    
-    # Create the broadcasted shape
-    broadcasted: List[int] = []
-    for d1, d2 in zip(s1, s2):
-        if d1 == 1:
-            broadcasted.append(d2)
-        elif d2 == 1:
-            broadcasted.append(d1)
-        elif d1 == d2:
-            broadcasted.append(d1)
-        else:
-            raise IndexingError(f"Shape {shape1} and {shape2} are not broadcastable.")
-    
-    return tuple(broadcasted)
+    # TODO: Implement for Task 2.2.
+    raise NotImplementedError("Need to implement for Task 2.2")
 
 
 def strides_from_shape(shape: UserShape) -> UserStrides:
@@ -271,11 +231,8 @@ class TensorData:
             range(len(self.shape))
         ), f"Must give a position to each dimension. Shape: {self.shape} Order: {order}"
 
-        new_shape = tuple(self.shape[i] for i in order)
-        new_strides = tuple(self.strides[i] for i in order)
-
-        # Return a new TensorData with permuted shape and strides
-        return TensorData(self._storage, new_shape, new_strides)        
+        # TODO: Implement for Task 2.1.
+        raise NotImplementedError("Need to implement for Task 2.1")
 
     def to_string(self) -> str:
         """Convert to string"""
