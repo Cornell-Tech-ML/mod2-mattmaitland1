@@ -94,7 +94,7 @@ def broadcast_index(
         None
 
     """
-    # # TODO: Implement for Task 2.2.
+    # TODO: Implement for Task 2.2.
     for i in range(len(shape)):
         if shape[i] > 1:
             out_index[i] = big_index[len(big_shape) - len(shape) + i]
@@ -120,15 +120,19 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
 
     """
     # Convert shapes to lists for easier manipulation
-    s1 = list(shape1)
-    s2 = list(shape2)
+    shape1_new = list(shape1)
+    shape2_new = list(shape2)
 
     # Align shapes from the right
-    s1 = [1] * (max(len(s1), len(s2)) - len(s1)) + s1
-    s2 = [1] * (max(len(s1), len(s2)) - len(s2)) + s2
+    shape1_new = [1] * (
+        max(len(shape1_new), len(shape2_new)) - len(shape1_new)
+    ) + shape1_new
+    shape2_new = [1] * (
+        max(len(shape1_new), len(shape2_new)) - len(shape2_new)
+    ) + shape2_new
 
     broadcasted = []
-    for d1, d2 in zip(s1, s2):
+    for d1, d2 in zip(shape1_new, shape2_new):
         if d1 == 1:
             broadcasted.append(d2)
         elif d2 == 1:
@@ -138,7 +142,9 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
         elif d1 % d2 == 0 or d2 % d1 == 0:
             broadcasted.append(max(d1, d2))
         else:
-            raise IndexingError(f"Shape {shape1} and {shape2} are not broadcastable.")
+            raise IndexingError(
+                f"Shape {shape1_new} and {shape2_new} are not broadcastable."
+            )
 
     return tuple(broadcasted)
     # raise NotImplementedError("Need to implement for Task 2.2")
@@ -210,9 +216,11 @@ class TensorData:
 
     @staticmethod
     def shape_broadcast(shape_a: UserShape, shape_b: UserShape) -> UserShape:
+        """A function to broadcast two shapes."""
         return shape_broadcast(shape_a, shape_b)
 
     def index(self, index: Union[int, UserIndex]) -> int:
+        """A function to convert an index to a position."""
         if isinstance(index, int):
             aindex: Index = array([index])
         else:  # if isinstance(index, tuple):
@@ -236,6 +244,7 @@ class TensorData:
         return index_to_position(array(index), self._strides)
 
     def indices(self) -> Iterable[UserIndex]:
+        """A function to generate all indices of the tensor."""
         lshape: Shape = array(self.shape)
         out_index: Index = array(self.shape)
         for i in range(self.size):
@@ -247,10 +256,12 @@ class TensorData:
         return tuple((random.randint(0, s - 1) for s in self.shape))
 
     def get(self, key: UserIndex) -> float:
+        """A function to get the value at a given index."""
         x: float = self._storage[self.index(key)]
         return x
 
     def set(self, key: UserIndex, val: float) -> None:
+        """A function to set the value at a given index."""
         self._storage[self.index(key)] = val
 
     def tuple(self) -> Tuple[Storage, Shape, Strides]:

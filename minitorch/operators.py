@@ -29,13 +29,13 @@ def neg(x: float) -> float:
     return -x
 
 
-def lt(x: float, y: float) -> bool:
+def lt(x: float, y: float) -> float:
     """Check if x is less than y."""
     return 1.0 if x < y else 0.0
     # return x < y
 
 
-def eq(x: float, y: float) -> bool:
+def eq(x: float, y: float) -> float:
     """Check if x is equal to y."""
     return 1.0 if x == y else 0.0
     # return x == y

@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Callable, Optional, Type
 
 from typing_extensions import Protocol
+import numpy as np
 
 from . import operators
 from .tensor_data import (
@@ -39,7 +40,9 @@ class TensorOps:
     @staticmethod
     def reduce(
         fn: Callable[[float, float], float], start: float = 0.0
-    ) -> Callable[[Tensor, int], Tensor]: ...
+    ) -> Callable[[Tensor, int], Tensor]:
+        """Reduce placeholder"""
+        ...
 
     @staticmethod
     def matrix_multiply(a: Tensor, b: Tensor) -> Tensor:
@@ -199,7 +202,7 @@ class SimpleOps(TensorOps):
         Args:
         ----
             fn: function from two floats-to-float to apply
-            a (:class:`TensorData`): tensor to reduce over
+            start (:class:`TensorData`): tensor to reduce over
             dim (int): int of dim to reduce
 
         Returns:
@@ -269,8 +272,11 @@ def tensor_map(
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-        out_index = [0] * len(out_shape)
-        in_index = [0] * len(in_shape)
+        out_index = np.zeros(
+            len(out_shape), dtype=np.int32
+        )  # Create a NumPy array instead of a list
+        # in_index = [0] * len(in_shape)
+        in_index = np.zeros(len(in_shape), dtype=np.int32)
         for i in range(len(out)):
             to_index(i, out_shape, out_index)
             broadcast_index(out_index, out_shape, in_shape, in_index)
@@ -326,9 +332,14 @@ def tensor_zip(
     ) -> None:
         # TODO: Implement for Task 2.3.
         # raise NotImplementedError("Need to implement for Task 2.3")
-        out_index = [0] * len(out_shape)
-        a_index = [0] * len(a_shape)
-        b_index = [0] * len(b_shape)
+        # out_index = [0] * len(out_shape)
+        out_index = np.zeros(
+            len(out_shape), dtype=np.int32
+        )  # Create a NumPy array instead of a list
+        # a_index = [0] * len(a_shape)
+        a_index = np.zeros(len(a_shape), dtype=np.int32)
+        # b_index = [0] * len(b_shape)
+        b_index = np.zeros(len(b_shape), dtype=np.int32)
 
         for i in range(len(out)):
             to_index(i, out_shape, out_index)
@@ -374,7 +385,9 @@ def tensor_reduce(
         reduce_dim: int,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        out_index = [0] * len(out_shape)
+        out_index = np.zeros(
+            len(out_shape), dtype=np.int32
+        )  # Create a NumPy array instead of a list
 
         for i in range(len(out)):
             # Convert flattened index to multi-dimensional index
