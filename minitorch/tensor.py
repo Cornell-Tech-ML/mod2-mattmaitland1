@@ -30,7 +30,6 @@ from .tensor_functions import (
     Sigmoid,
     Sum,
     View,
-    tensor,
 )
 
 if TYPE_CHECKING:
@@ -283,5 +282,126 @@ class Tensor:
         """
         return self._tensor.shape
 
+    @property
+    def size(self) -> int:
+        return int(operators.prod(self.shape))
+
+    @property
+    def dims(self) -> int:
+        return len(self.shape)
+
     # Functions
     # TODO: Implement for Task 2.3.
+
+    def __add__(self, b: Tensor) -> Tensor:
+        return Add.apply(self, self._ensure_tensor(b))
+
+    def __sub__(self, b: Tensor) -> Tensor:
+        return Add.apply(self, Neg.apply(self._ensure_tensor(b)))
+
+    def __mul__(self, b: Tensor) -> Tensor:
+        return Mul.apply(self, self._ensure_tensor(b))
+
+    def __lt__(self, b: Tensor) -> Tensor:
+        return LT.apply(self, self._ensure_tensor(b))
+
+    def __eq__(self, b: Tensor) -> Tensor:
+        return EQ.apply(self, self._ensure_tensor(b))
+
+    def __gt__(self, b: Tensor) -> Tensor:
+        return LT.apply(self._ensure_tensor(b), self)
+
+    def __neg__(self) -> Tensor:
+        return Neg.apply(self)
+
+    def __radd__(self, b: Tensor) -> Tensor:
+        return self + b
+
+    def __rmul__(self, b: Tensor) -> Tensor:
+        return self * b
+
+    def all(self, dim: Optional[int] = None) -> Tensor:
+        # print(f"all() called with dim: {dim}")  # Debug print
+        if dim is None:
+            result = self
+            for d in range(self.dims):
+                result = All.apply(result, self._ensure_tensor(d))
+            result = result.sum() > 0
+        else:
+            result = All.apply(self, self._ensure_tensor(dim))
+
+        result = result.view(1)
+
+        # print(f"all() result: {result}")  # Debug print
+        return result
+
+    def is_close(self, b: Tensor) -> Tensor:
+        return IsClose.apply(self, self._ensure_tensor(b))
+
+    def sigmoid(self) -> Tensor:
+        return Sigmoid.apply(self)
+
+    def relu(self) -> Tensor:
+        return ReLU.apply(self)
+
+    def log(self) -> Tensor:
+        return Log.apply(self)
+
+    def exp(self) -> Tensor:
+        return Exp.apply(self)
+
+    def sum(self, dim: Optional[int] = None) -> Tensor:
+        # print(f"sum called with dim: {dim}")
+        if dim is None:
+            # Sum over all dimensions
+            result = Sum.apply(
+                self.contiguous().view(self.size), self._ensure_tensor(-1)
+            )
+            result = result.view(1)
+        else:
+            result = Sum.apply(self, self._ensure_tensor(dim))
+        # print(f"sum result shape: {result.shape}")
+        return result
+
+    def mean(self, dim: Optional[int] = None) -> Tensor:
+        # print(f"mean called with dim: {dim}")
+        if dim is None:
+            # If dim is None, we're reducing over all dimensions
+            return self.sum() / self.size
+        else:
+            result = self.sum(dim) / self.shape[dim]
+        # print(f"mean result shape: {result.shape}")
+        return result
+
+    def permute(self, *dims: Union[int, List[int], Tuple[int, ...]]) -> "Tensor":
+        if len(dims) == 0:
+            return self
+
+        if len(dims) == 1:
+            if isinstance(dims[0], int):
+                new_dims = [dims[0]]
+            else:
+                new_dims = list(dims[0])
+        else:
+            new_dims = list(dims)
+
+        dims_tensor = Tensor.make(new_dims, (len(new_dims),), backend=self.backend)
+        return Permute.apply(self, dims_tensor)
+
+    def view(self, *shape: Union[int, Tuple[int, ...], List[int]]) -> Tensor:
+        # print(f"view() called with shape: {shape}")  # Debug print
+
+        if len(shape) == 1 and isinstance(shape[0], int):
+            new_shape = (shape[0],)
+        elif len(shape) == 1 and isinstance(shape[0], (tuple, list)):
+            new_shape = shape[0]
+        else:
+            new_shape = shape
+
+        result = View.apply(
+            self, Tensor.make(list(new_shape), (len(new_shape),), backend=self.backend)
+        )
+        return result
+
+    def zero_grad_(self) -> None:
+        self.grad = None
