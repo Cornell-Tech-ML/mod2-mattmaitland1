@@ -76,7 +76,8 @@ Epoch: 490/500, loss: 2.2815127488566174, correct: 50
 Epoch: 500/500, loss: 2.2194558071393775, correct: 50
 
 
-Diag
+<b>Diag</b>
+
 Pts: 50
 Size of Hidden Layer: 3
 LR: .5
