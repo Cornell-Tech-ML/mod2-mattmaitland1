@@ -28,8 +28,8 @@ Size of Hidden Layer: 3
 
 LR: .1
 
-![Simple Plot](mod2_outputs/plot.png)
-![Simple Loss](mod2_outputs/loss.png)
+![Simple Plot](mod2_outputs/simple/plot.png)
+![Simple Loss](mod2_outputs/simple/loss.png)
 
 Epoch: 0/500, loss: 0, correct: 0
 Epoch: 10/500, loss: 29.5287956677086, correct: 28
