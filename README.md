@@ -20,7 +20,7 @@ The files that will be synced are:
 
 Outputs:
 
-<b>Simple</b>
+<h1>Simple</h1>
 
 Pts: 50
 
@@ -84,13 +84,16 @@ Epoch: 490/500, loss: 2.2815127488566174, correct: 50
 Epoch: 500/500, loss: 2.2194558071393775, correct: 50
 
 
-<b>Diag</b>
+<h1>Diag</h1>
 
 Pts: 50
 
 Size of Hidden Layer: 3
 
 LR: .5
+
+![Diag Plot](mod2_outputs/diag/plot.png)
+![Diag Loss](mod2_outputs/diag/loss.png)
 
 Epoch: 0/500, loss: 0, correct: 0
 Epoch: 10/500, loss: 12.522498537785745, correct: 46
@@ -144,13 +147,17 @@ Epoch: 480/500, loss: 0.7067368337816254, correct: 50
 Epoch: 490/500, loss: 0.7033673808605087, correct: 50
 Epoch: 500/500, loss: 0.6825867014678196, correct: 50
 
-<b>Split</b>
+
+<h1>Split</h1>
 
 Pts: 50
 
 Size of Hidden Layer: 7
 
 LR: .5
+
+![Split Plot](mod2_outputs/split/plot.png)
+![Split Loss](mod2_outputs/split/loss.png)
 
 Epoch: 0/500, loss: 0, correct: 0
 Epoch: 10/500, loss: 32.16291944747219, correct: 36
@@ -205,13 +212,16 @@ Epoch: 490/500, loss: 0.7369664986477671, correct: 50
 Epoch: 500/500, loss: 0.701912687508114, correct: 50
 
 
-<b>Xor</b>
+<h1>Xor</h1>
 
 Pts: 50
 
 Size of Hidden Layer: 7
 
 LR: .5
+
+![Xor Plot](mod2_outputs/xor/plot.png)
+![Xor Loss](mod2_outputs/xor/loss.png)
 
 Epoch: 0/500, loss: 0, correct: 0
 Epoch: 10/500, loss: 33.52154617824739, correct: 32
