@@ -18,10 +18,18 @@ The files that will be synced are:
 
         minitorch/operators.py minitorch/module.py minitorch/autodiff.py minitorch/scalar.py minitorch/scalar_functions.py minitorch/module.py project/run_manual.py project/run_scalar.py project/datasets.py
 
-Outputs:  Simple
+Outputs:
+
+<b>Simple</b>
+
 Pts: 50
+
 Size of Hidden Layer: 3
+
 LR: .1
+
+![Simple Plot](mod2_outputs/plot.png)
+![Simple Loss](mod2_outputs/loss.png)
 
 Epoch: 0/500, loss: 0, correct: 0
 Epoch: 10/500, loss: 29.5287956677086, correct: 28
@@ -79,7 +87,9 @@ Epoch: 500/500, loss: 2.2194558071393775, correct: 50
 <b>Diag</b>
 
 Pts: 50
+
 Size of Hidden Layer: 3
+
 LR: .5
 
 Epoch: 0/500, loss: 0, correct: 0
@@ -134,9 +144,12 @@ Epoch: 480/500, loss: 0.7067368337816254, correct: 50
 Epoch: 490/500, loss: 0.7033673808605087, correct: 50
 Epoch: 500/500, loss: 0.6825867014678196, correct: 50
 
-Split
+<b>Split</b>
+
 Pts: 50
+
 Size of Hidden Layer: 7
+
 LR: .5
 
 Epoch: 0/500, loss: 0, correct: 0
@@ -192,9 +205,12 @@ Epoch: 490/500, loss: 0.7369664986477671, correct: 50
 Epoch: 500/500, loss: 0.701912687508114, correct: 50
 
 
-Xor
+<b>Xor</b>
+
 Pts: 50
+
 Size of Hidden Layer: 7
+
 LR: .5
 
 Epoch: 0/500, loss: 0, correct: 0
