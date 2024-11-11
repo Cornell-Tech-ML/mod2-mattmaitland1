@@ -30,7 +30,7 @@ from .tensor_functions import (
     Sigmoid,
     Sum,
     View,
-    tensor
+    tensor,
 )
 
 if TYPE_CHECKING:
@@ -332,6 +332,7 @@ class Tensor:
         return self * b
 
     def all(self, dim: Optional[int] = None) -> Tensor:
+        """A function to compute the all function on the tensor."""
         if dim is None:
             return All.apply(self.view(self.size), self._ensure_tensor(0))
         else:
@@ -358,22 +359,27 @@ class Tensor:
         return Exp.apply(self)
 
     def sum(self, dim: Optional[int] = None) -> Tensor:
+        """A function to compute the sum of the tensor."""
         if dim is None:
             return Sum.apply(self.contiguous().view(self.size), self._ensure_tensor(0))
         else:
             return Sum.apply(self, self._ensure_tensor(dim))
 
     def mean(self, dim: Optional[int] = None) -> Tensor:
+        """A function to compute the mean of the tensor."""
         if dim is not None:
             return self.sum(dim) / self.shape[dim]
         else:
             return self.sum() / self.size
 
     def permute(self, *order: int) -> Tensor:
+        """A function to permute the tensor."""
         return Permute.apply(self, tensor(list(order)))
 
     def view(self, *shape: int) -> Tensor:
+        """A function to view the tensor."""
         return View.apply(self, tensor(list(shape)))
 
     def zero_grad_(self) -> None:
+        """A function to zero the gradient of the tensor."""
         self.grad = None

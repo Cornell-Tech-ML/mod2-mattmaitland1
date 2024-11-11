@@ -237,7 +237,7 @@ class SimpleOps(TensorOps):
 
 
 def tensor_map(
-    fn: Callable[[float], float]
+    fn: Callable[[float], float],
 ) -> Callable[[Storage, Shape, Strides, Storage, Shape, Strides], None]:
     """Low-level implementation of tensor map between
     tensors with *possibly different strides*.
@@ -272,14 +272,15 @@ def tensor_map(
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-        out_index = np.zeros(len(out_shape), np.int16)
-        in_index = np.zeros(len(in_shape), np.int16)
+        out_index = np.zeros(len(out_shape), np.int32)
+        in_index = np.zeros(len(in_shape), np.int32)
         for i in range(len(out)):
             to_index(i, out_shape, out_index)
             broadcast_index(out_index, out_shape, in_shape, in_index)
             o = index_to_position(out_index, out_strides)
             j = index_to_position(in_index, in_strides)
             out[o] = fn(in_storage[j])
+
     return _map
 
 
@@ -335,6 +336,7 @@ def tensor_zip(
             broadcast_index(out_index, out_shape, b_shape, b_index)
             k = index_to_position(b_index, b_strides)
             out[o] = fn(a_storage[j], b_storage[k])
+
     return _zip
 
 
@@ -374,6 +376,7 @@ def tensor_reduce(
                 out_index[reduce_dim] = s
                 j = index_to_position(out_index, a_strides)
                 out[o] = fn(out[o], a_storage[j])
+
     return _reduce
 
 

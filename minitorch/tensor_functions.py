@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import random
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -193,11 +193,13 @@ class Exp(Function):
 class Sum(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor, dim: Tensor) -> Tensor:
+        """A function to apply the sum function to the tensor."""
         ctx.save_for_backward(a.shape, dim)
         return a.f.add_reduce(a, int(dim.item()))
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
+        """A function to compute the gradient of the sum function."""
         a_shape, dim = ctx.saved_values
         return grad_output, 0.0
 

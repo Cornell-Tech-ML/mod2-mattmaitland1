@@ -123,7 +123,7 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
     c_rev = [0] * m
     a_rev = list(reversed(a))
     b_rev = list(reversed(b))
-    
+
     for i in range(m):
         if i >= len(a):
             c_rev[i] = b_rev[i]
@@ -271,7 +271,7 @@ class TensorData:
         assert list(sorted(order)) == list(
             range(len(self.shape))
         ), f"Must give a position to each dimension. Shape: {self.shape} Order: {order}"
-        
+
         return TensorData(
             self._storage,
             tuple([self.shape[o] for o in order]),
