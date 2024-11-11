@@ -30,6 +30,7 @@ from .tensor_functions import (
     Sigmoid,
     Sum,
     View,
+    tensor
 )
 
 if TYPE_CHECKING:
@@ -293,65 +294,52 @@ class Tensor:
     @property
     def size(self) -> int:
         """A function to get the size of the tensor."""
-        return int(operators.prod(self.shape))
+        return self._tensor.size
 
     @property
     def dims(self) -> int:
         """A function to get the number of dimensions of the tensor."""
-        return len(self.shape)
+        return self._tensor.dims
 
     # Functions
     # TODO: Implement for Task 2.3.
 
-    def __add__(self, b: Tensor) -> Tensor:
+    def __add__(self, b: TensorLike) -> Tensor:
         return Add.apply(self, self._ensure_tensor(b))
 
-    def __sub__(self, b: Tensor) -> Tensor:
-        return Add.apply(self, Neg.apply(self._ensure_tensor(b)))
+    def __sub__(self, b: TensorLike) -> Tensor:
+        return Add.apply(self, -self._ensure_tensor(b))
 
-    def __mul__(self, b: Tensor) -> Tensor:
+    def __mul__(self, b: TensorLike) -> Tensor:
         return Mul.apply(self, self._ensure_tensor(b))
 
-    def __lt__(self, b: Tensor) -> Tensor:
+    def __lt__(self, b: TensorLike) -> Tensor:
         return LT.apply(self, self._ensure_tensor(b))
 
-    def __eq__(self, b: Tensor) -> Tensor:
+    def __eq__(self, b: TensorLike) -> Tensor:
         return EQ.apply(self, self._ensure_tensor(b))
 
-    def __gt__(self, b: Tensor) -> Tensor:
+    def __gt__(self, b: TensorLike) -> Tensor:
         return LT.apply(self._ensure_tensor(b), self)
 
     def __neg__(self) -> Tensor:
         return Neg.apply(self)
 
-    def __radd__(self, b: Tensor) -> Tensor:
+    def __radd__(self, b: TensorLike) -> Tensor:
         return self + b
 
-    def __rmul__(self, b: Tensor) -> Tensor:
+    def __rmul__(self, b: TensorLike) -> Tensor:
         return self * b
 
     def all(self, dim: Optional[int] = None) -> Tensor:
-        """A function to check if all elements in the tensor are true."""
-        # print(f"all() called with dim: {dim}")  # Debug print
         if dim is None:
-            result = self
-            for d in range(self.dims):
-                result = All.apply(result, self._ensure_tensor(d))
-            result_sum = result.sum()
-            result = LT.apply(
-                self._ensure_tensor(0), result_sum
-            )  # Check if result_sum > 0
+            return All.apply(self.view(self.size), self._ensure_tensor(0))
         else:
-            result = All.apply(self, self._ensure_tensor(dim))
+            return All.apply(self, self._ensure_tensor(dim))
 
-        result = result.view(1)
-
-        # print(f"all() result: {result}")  # Debug print
-        return result
-
-    def is_close(self, b: Tensor) -> Tensor:
+    def is_close(self, y: Tensor) -> Tensor:
         """A function to check if the tensor is close to another tensor."""
-        return IsClose.apply(self, self._ensure_tensor(b))
+        return IsClose.apply(self, y)
 
     def sigmoid(self) -> Tensor:
         """A function to apply the sigmoid function to the tensor."""
@@ -370,61 +358,22 @@ class Tensor:
         return Exp.apply(self)
 
     def sum(self, dim: Optional[int] = None) -> Tensor:
-        """A function to sum the elements of the tensor over a given dimension."""
-        # print(f"sum called with dim: {dim}")
         if dim is None:
-            # Sum over all dimensions
-            result = Sum.apply(
-                self.contiguous().view(self.size), self._ensure_tensor(-1)
-            )
-            result = result.view(1)
+            return Sum.apply(self.contiguous().view(self.size), self._ensure_tensor(0))
         else:
-            result = Sum.apply(self, self._ensure_tensor(dim))
-        # print(f"sum result shape: {result.shape}")
-        return result
+            return Sum.apply(self, self._ensure_tensor(dim))
 
     def mean(self, dim: Optional[int] = None) -> Tensor:
-        """A function to calculate the mean of the tensor over a given dimension."""
-        # print(f"mean called with dim: {dim}")
-        if dim is None:
-            # If dim is None, we're reducing over all dimensions
+        if dim is not None:
+            return self.sum(dim) / self.shape[dim]
+        else:
             return self.sum() / self.size
-        else:
-            result = self.sum(dim) / self.shape[dim]
-        # print(f"mean result shape: {result.shape}")
-        return result
 
-    def permute(self, *dims: Union[int, List[int], Tuple[int, ...]]) -> "Tensor":
-        """A function to permute the dimensions of the tensor."""
-        if len(dims) == 0:
-            return self
+    def permute(self, *order: int) -> Tensor:
+        return Permute.apply(self, tensor(list(order)))
 
-        if len(dims) == 1 and isinstance(dims[0], int):
-            new_dims = [dims[0]]  # Keep as integer
-
-        else:
-            new_dims = list(dims)  # Convert to list for multiple dimensions
-
-        dims_tensor = Tensor.make(new_dims, (len(new_dims),), backend=self.backend)  # type: ignore
-        return Permute.apply(self, dims_tensor)
-
-    def view(self, *shape: Union[int, Tuple[int, ...], List[int]]) -> Tensor:
-        """A function to view the tensor with a new shape."""
-        # print(f"view() called with shape: {shape}")  # Debug print
-
-        if len(shape) == 1 and isinstance(shape[0], int):
-            new_shape = (shape[0],)
-        elif len(shape) == 1 and isinstance(shape[0], (tuple, list)):
-            new_shape = shape[0]
-        else:
-            new_shape = shape
-
-        result = View.apply(
-            self,
-            Tensor.make(list(new_shape), (len(new_shape),), backend=self.backend),  # type: ignore
-        )
-        return result
+    def view(self, *shape: int) -> Tensor:
+        return View.apply(self, tensor(list(shape)))
 
     def zero_grad_(self) -> None:
-        """A function to zero out the gradients of the tensor."""
         self.grad = None

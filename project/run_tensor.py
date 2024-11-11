@@ -15,37 +15,29 @@ def RParam(*shape):
 class Network(minitorch.Module):
     def __init__(self, hidden_layers):
         super().__init__()
+        # Submodules
         self.layer1 = Linear(2, hidden_layers)
         self.layer2 = Linear(hidden_layers, hidden_layers)
         self.layer3 = Linear(hidden_layers, 1)
 
     def forward(self, x):
-        middle = self.layer1.forward(x).relu()
-        end = self.layer2.forward(middle).relu()
-        return self.layer3.forward(end).sigmoid()
+        h = self.layer1.forward(x).relu()
+        h = self.layer2.forward(h).relu()
+        return self.layer3.forward(h).sigmoid()
 
 class Linear(minitorch.Module):
     def __init__(self, in_size, out_size):
         super().__init__()
         self.weights = RParam(in_size, out_size)
-        self.biases = RParam(out_size)
+        self.bias = RParam(out_size)
         self.out_size = out_size
 
-    def forward(self, inputs):
-        n_pts, in_size = inputs.shape
-
-        # Reshape weights and inputs for broadcasting
-        weights = self.weights.value.view(1, in_size, self.out_size)
-        inputs_reshaped = inputs.view(n_pts, in_size, 1)
-
-        # Compute the matrix multiplication
-        m = (weights * inputs_reshaped).sum(1)
-
-        # Reshape the result and add biases
-        m = m.view(n_pts, self.out_size)
-        biases = self.biases.value.view(1, self.out_size)
-
-        return m + biases
+    def forward(self, x):
+        batch, in_size = x.shape
+        return (
+            self.weights.value.view(1, in_size, self.out_size)
+            * x.view(batch, in_size, 1)
+        ).sum(1).view(batch, self.out_size) + self.bias.value.view(self.out_size)
 
 
 def default_log_fn(epoch, total_loss, correct, losses):
